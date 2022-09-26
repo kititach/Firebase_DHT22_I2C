@@ -1,4 +1,4 @@
-# Firebase_DHT22_I2C
+# Firebase_SHTC3_I2C
 ## Set up Database Security Rules
 ```
 // These rules grant access to a node matching the authenticated
