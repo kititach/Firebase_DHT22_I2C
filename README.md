@@ -161,3 +161,28 @@ void loop(){
   }
 }
 ```
+
+## Get to know the different functions
+### Set
+|Command    |Description                       |Example                                   |
+|-----------|----------------------------------|------------------------------------------|
+|Int        |ใช้นำตัวเลขจำนวนเต็มเข้าออปเจ็ค         |Firebase.setInt("number", 10);            |
+|Float      |ใช้นำตัวเลขที่มีจุดทศนิยมเข้าออปเจ็ค      |Firebase.setFloat("number", 2.56);        |
+|Bool       |ใช้นำค่า True หรือ False เข้าออปเจ็ค   |Firebase.setBool("trueORfalse", true);    |
+|String     |ใช้นำข้อความเข้าออปเจ็ค               |Firebase.setString("title", "Hello !");   |
+
+### Get
+|Command    |Description                       |Example                                             |
+|-----------|----------------------------------|----------------------------------------------------|
+|Int        |อ่านค่าตัวเลขจำนวนเต็มจากออปเจ็ค       |int number = Firebase.getInt("number");              |
+|Float      |อ่านค่าตัวเลขที่มีจุดทศนิยมจากออปเจ็ค     |int number = Firebase.getInt("number");             |
+|Bool       |อ่านค่าค่า True หรือ False จากออปเจ็ค  |bool trueORfalse = Firebase.getBool("trueORfalse"); |
+|String     |อ่านค่าข้อความจากออปเจ็ค              |String title = Firebase.getString("title");         |
+
+### Push
+|Command    |Description                              |Example                                       |
+|-----------|-----------------------------------------|----------------------------------------------|
+|Int        |ใช้นำตัวเลขจำนวนเต็มเข้าไปต่อท้ายในออปเจ็ค       |Firebase.pushInt("arrNumber", 10);            |
+|Float      |ใช้นำตัวเลขที่มีจุดทศนิยมเข้าไปต่อท้ายในออปเจ็ค	  |Firebase.pushFloat("arrNumber", 2.56);        |
+|Bool       |ใช้นำค่า True หรือ False เข้าไปต่อท้ายในออปเจ็ค |Firebase.pushBool("arrTrueORfalse", true);    |
+|String     |ใช้นำข้อความเข้าไปต่อท้ายในออปเจ็ค             |Firebase.pushString("arrTitle", "Hello !");   |
