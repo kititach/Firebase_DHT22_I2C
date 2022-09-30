@@ -1,3 +1,28 @@
+## Get to know the different functions
+### Set
+|Command    |Description                       |Example                                   |
+|-----------|----------------------------------|------------------------------------------|
+|Int        |ใช้นำตัวเลขจำนวนเต็มเข้าออปเจ็ค         |Firebase.setInt("number", 10);            |
+|Float      |ใช้นำตัวเลขที่มีจุดทศนิยมเข้าออปเจ็ค      |Firebase.setFloat("number", 2.56);        |
+|Bool       |ใช้นำค่า True หรือ False เข้าออปเจ็ค   |Firebase.setBool("trueORfalse", true);    |
+|String     |ใช้นำข้อความเข้าออปเจ็ค               |Firebase.setString("title", "Hello !");   |
+
+### Get
+|Command    |Description                       |Example                                             |
+|-----------|----------------------------------|----------------------------------------------------|
+|Int        |อ่านค่าตัวเลขจำนวนเต็มจากออปเจ็ค       |int number = Firebase.getInt("number");              |
+|Float      |อ่านค่าตัวเลขที่มีจุดทศนิยมจากออปเจ็ค     |int number = Firebase.getInt("number");             |
+|Bool       |อ่านค่าค่า True หรือ False จากออปเจ็ค  |bool trueORfalse = Firebase.getBool("trueORfalse"); |
+|String     |อ่านค่าข้อความจากออปเจ็ค              |String title = Firebase.getString("title");         |
+
+### Push
+|Command    |Description                              |Example                                       |
+|-----------|-----------------------------------------|----------------------------------------------|
+|Int        |ใช้นำตัวเลขจำนวนเต็มเข้าไปต่อท้ายในออปเจ็ค       |Firebase.pushInt("arrNumber", 10);            |
+|Float      |ใช้นำตัวเลขที่มีจุดทศนิยมเข้าไปต่อท้ายในออปเจ็ค	  |Firebase.pushFloat("arrNumber", 2.56);        |
+|Bool       |ใช้นำค่า True หรือ False เข้าไปต่อท้ายในออปเจ็ค |Firebase.pushBool("arrTrueORfalse", true);    |
+|String     |ใช้นำข้อความเข้าไปต่อท้ายในออปเจ็ค             |Firebase.pushString("arrTitle", "Hello !");   |
+
 # Firebase_SHTC3_I2C
 ## Set up Database Security Rules
 ```
@@ -17,7 +42,7 @@
 ## Code
 ```
 #include <Arduino.h>
-#include "SHTC3.h"
+#include "Adafruit_SHTC3.h"
 #include <Firebase_ESP_Client.h>
 #if defined(ESP32)
   #include <WiFi.h>
@@ -31,18 +56,18 @@
 #include "addons/RTDBHelper.h"
 
 // Insert your network credentials
-#define WIFI_SSID "REPLACE_WITH_YOUR_SSID"                  //เปลี่ยน
-#define WIFI_PASSWORD "REPLACE_WITH_YOUR_PASSWORD"          //เปลี่ยน
+#define WIFI_SSID "IoT_1Mbps"
+#define WIFI_PASSWORD "1234567890"
 
 // Insert Firebase project API Key
-#define API_KEY "REPLACE_WITH_YOUR_PROJECT_API_KEY"         //เปลี่ยน
+#define API_KEY "AIzaSyCylVpE18RtTy-KVtzUOGQu4UpOWB-cHyM"
 
 // Insert Authorized Email and Corresponding Password
-#define USER_EMAIL "REPLACE_WITH_THE_USER_EMAIL"            //เปลี่ยน
-#define USER_PASSWORD "REPLACE_WITH_THE_USER_PASSWORD"      //เปลี่ยน
+#define USER_EMAIL "kititach.k@en.rmutt.ac.th"
+#define USER_PASSWORD "030413426Turk"
 
 // Insert RTDB URLefine the RTDB URL
-#define DATABASE_URL "REPLACE_WITH_YOUR_DATABASE_URL"       //เปลี่ยน
+#define DATABASE_URL "https://esp8266-shtc3-efabd-default-rtdb.firebaseio.com/"
 
 // Define Firebase objects
 FirebaseData fbdo;
@@ -56,16 +81,16 @@ String uid;
 String databasePath;
 String tempPath;
 String humPath;
+String presPath;
 
-// BME280 sensor
-SHTC3 dht(Wire); // I2C
+// shtc3 sensor
+Adafruit_SHTC3 shtc3 = Adafruit_SHTC3(); // I2C
 float temperature;
 float humidity;
 
 // Timer variables (send new readings every three minutes)
 unsigned long sendDataPrevMillis = 0;
 unsigned long timerDelay = 180000;
-
 
 // Initialize WiFi
 void initWiFi() {
@@ -98,7 +123,6 @@ void sendFloat(String path, float value){
 
 void setup(){
   Serial.begin(115200);
-  Wire.begin();
   // Initialize BME280 sensor
   initWiFi();
 
@@ -130,6 +154,7 @@ void setup(){
     Serial.print('.');
     delay(1000);
   }
+
   // Print user UID
   uid = auth.token.uid.c_str();
   Serial.print("User UID: ");
@@ -144,45 +169,20 @@ void setup(){
 }
 
 void loop(){
-  dht.begin(true);
-  dht.sample();
+  sensors_event_t humiditys, temp;
+  shtc3.getEvent(&humiditys, &temp);
 
   // Send new readings to database
   if (Firebase.ready() && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)){
     sendDataPrevMillis = millis();
 
     // Get latest sensor readings
-    temperature = dht.readTempC();
-    humidity = dht.readHumidity();
+    temperature = temp.temperature;
+    humidity = humiditys.relative_humidity;
 
     // Send readings to database:
     sendFloat(tempPath, temperature);
     sendFloat(humPath, humidity);
-  }
+    }
 }
 ```
-
-## Get to know the different functions
-### Set
-|Command    |Description                       |Example                                   |
-|-----------|----------------------------------|------------------------------------------|
-|Int        |ใช้นำตัวเลขจำนวนเต็มเข้าออปเจ็ค         |Firebase.setInt("number", 10);            |
-|Float      |ใช้นำตัวเลขที่มีจุดทศนิยมเข้าออปเจ็ค      |Firebase.setFloat("number", 2.56);        |
-|Bool       |ใช้นำค่า True หรือ False เข้าออปเจ็ค   |Firebase.setBool("trueORfalse", true);    |
-|String     |ใช้นำข้อความเข้าออปเจ็ค               |Firebase.setString("title", "Hello !");   |
-
-### Get
-|Command    |Description                       |Example                                             |
-|-----------|----------------------------------|----------------------------------------------------|
-|Int        |อ่านค่าตัวเลขจำนวนเต็มจากออปเจ็ค       |int number = Firebase.getInt("number");              |
-|Float      |อ่านค่าตัวเลขที่มีจุดทศนิยมจากออปเจ็ค     |int number = Firebase.getInt("number");             |
-|Bool       |อ่านค่าค่า True หรือ False จากออปเจ็ค  |bool trueORfalse = Firebase.getBool("trueORfalse"); |
-|String     |อ่านค่าข้อความจากออปเจ็ค              |String title = Firebase.getString("title");         |
-
-### Push
-|Command    |Description                              |Example                                       |
-|-----------|-----------------------------------------|----------------------------------------------|
-|Int        |ใช้นำตัวเลขจำนวนเต็มเข้าไปต่อท้ายในออปเจ็ค       |Firebase.pushInt("arrNumber", 10);            |
-|Float      |ใช้นำตัวเลขที่มีจุดทศนิยมเข้าไปต่อท้ายในออปเจ็ค	  |Firebase.pushFloat("arrNumber", 2.56);        |
-|Bool       |ใช้นำค่า True หรือ False เข้าไปต่อท้ายในออปเจ็ค |Firebase.pushBool("arrTrueORfalse", true);    |
-|String     |ใช้นำข้อความเข้าไปต่อท้ายในออปเจ็ค             |Firebase.pushString("arrTitle", "Hello !");   |
